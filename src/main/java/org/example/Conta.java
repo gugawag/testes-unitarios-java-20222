@@ -42,5 +42,8 @@ public class Conta {
         return true;
     }
 
-
+    public void transferir(Conta destino, double valorATransferir) throws Exception {
+        this.debitar(valorATransferir);
+        destino.creditar(valorATransferir);
+    }
 }

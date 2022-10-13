@@ -71,4 +71,22 @@ public class ContaTest {
         Assertions.assertTrue(retorno);
     }
 
+    @Test
+    public void deveCreditarNoDestinoValorTransferidoDaOrigem() throws Exception {
+        // config
+        Conta origem = new Conta();
+        Conta destino = new Conta();
+
+        double valorInicial = 100;
+        origem.creditar(valorInicial);
+
+        double valorATransferir = 60;
+        // executar
+        origem.transferir(destino, valorATransferir);
+
+        // teste
+        Assertions.assertEquals(valorInicial - valorATransferir, origem.getSaldo());
+        Assertions.assertEquals(valorATransferir, destino.getSaldo());
+    }
+
 }
