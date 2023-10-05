@@ -8,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.times;
-
 @ExtendWith(MockitoExtension.class)
 public class ContaServiceTest {
 
@@ -20,24 +18,21 @@ public class ContaServiceTest {
     private ContaDAO contaDAO;
 
     @Test
-    public void naoDeveCadastrarContaExistente() {
-        Conta conta123 = new Conta();
-        conta123.setNumero("123");
+    public void naoDeveriaInserirContaJahExistente() {
+        Conta conta = new Conta("123", 0);
 
-        Mockito.doReturn(conta123).when(contaDAO).pesquisarPorNumero("123");
-
-        Assertions.assertThrows(ContaExistenteException.class, () -> contaService.inserir(conta123));
+        Mockito.doReturn(conta).when(contaDAO).pesquisarPorNumero("123");
+        Assertions.assertThrows(ContaExistenteException.class, () -> contaService.inserir(conta));
     }
 
     @Test
-    public void deveCadastrarNovaConta() {
-        Conta novaConta = new Conta();
-        novaConta.setNumero("123");
+    public void deveriaInserirConta() {
+        Conta conta = new Conta("123", 0);
 
         Mockito.doReturn(null).when(contaDAO).pesquisarPorNumero("123");
-        Mockito.doNothing().when(contaDAO).inserir(novaConta);
+        contaService.inserir(conta);
 
-        contaService.inserir(novaConta);
-        Mockito.verify(contaDAO, times(1)).inserir(novaConta);
+        Mockito.verify(contaDAO).inserir(conta);
     }
+
 }

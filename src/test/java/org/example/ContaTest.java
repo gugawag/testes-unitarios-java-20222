@@ -6,87 +6,75 @@ import org.junit.jupiter.api.Test;
 
 public class ContaTest {
 
-    Conta c1;
+    private Conta c1;
 
     @BeforeEach
-    private void configuraConta() {
-        c1 = new Conta();
-        c1.setNumero("1");
+    public void config() {
+        c1 = new Conta("1", 0);
     }
 
     @Test
-    public void deveriaTerSaldoZeroAoCriarNovaConta() {
-        // configurar
-
-        // executar
-
-        // testar
+    public void deveriaCriarContaComSaldoZero() {
+        //config
+        //execucao
+        //testar
         Assertions.assertEquals(0, c1.getSaldo());
     }
 
     @Test
-    public void contaNaoDeveFicarNegativa() {
-        // configurar
-        double valor = 100;
+    public void deveriaLancarExcecaoQuandoCreditarValorNegativo(){
+        // executar
+
+        //teste
+        Assertions.assertThrows(RuntimeException.class, () -> {c1.creditar(-1);});
+    }
+
+    @Test
+    public void naoDeveriaCreditarValorNegativo(){
+        // executar
         try {
-            c1.creditar(valor);
-        } catch (Exception e) {
+            c1.creditar(-1);
             Assertions.fail();
+        } catch (RuntimeException e) {
         }
-
-        // executar
-        Assertions.assertThrows(Exception.class,
-                () -> c1.debitar(valor + 1)
-        );
-    }
-
-    @Test
-    public void naoDevePermitirCreditarValoresNegativosOuNulo() {
-        //executar/testar
-        Assertions.assertThrows(Exception.class, ()->c1.creditar(-1));
+        //teste
         Assertions.assertEquals(0, c1.getSaldo());
     }
 
     @Test
-    public void naoDeveDebitarValoresNegativos() {
-        Assertions.assertThrows(Exception.class, ()->c1.debitar(-100));
-        Assertions.assertEquals(0, c1.getSaldo());
+    public void naoDeveriaPermitirSaldoNegativoAoConstruirConta() {
+        Assertions.assertThrows(RuntimeException.class, () -> {new Conta("1", -1);});
     }
 
     @Test
-    public void validarValoresPositivosPassandoNegativo() {
-        boolean retorno = c1.validarValoresPositivosB(-1);
-        Assertions.assertFalse(retorno);
+    public void naoDeveriaPermitirSaldoNegativo() {
+        Assertions.assertThrows(RuntimeException.class, () -> {c1.setSaldo(-1);});
     }
 
     @Test
-    public void validarValoresPositivosPassandoNulo() {
-        boolean retorno = c1.validarValoresPositivosB(0);
-        Assertions.assertFalse(retorno);
+    public void naoDeveriaTransferirValorNegativo() {
+        //configurar
+        Conta contaOrigem = c1;
+        Conta contaDestino = new Conta();
+
+        Assertions.assertThrows(RuntimeException.class, () -> contaOrigem.transferir(contaDestino, -1));
     }
 
     @Test
-    public void validarValoresPositivosPassandoPositivo() {
-        boolean retorno = c1.validarValoresPositivosB(1);
-        Assertions.assertTrue(retorno);
-    }
+    public void deveAparecerEmDestinoValorTransferidoDeOrigem() {
+        var saldoInicialOrigem = 300;
+        var saldoInicialDestino = 100;
+        var valorASerTransferido = 50;
 
-    @Test
-    public void deveCreditarNoDestinoValorTransferidoDaOrigem() throws Exception {
-        // config
-        Conta origem = new Conta();
-        Conta destino = new Conta();
+        Conta contaOrigem = new Conta("1", saldoInicialOrigem);
+        Conta contaDestino = new Conta("2", saldoInicialDestino);
 
-        double valorInicial = 100;
-        origem.creditar(valorInicial);
+        //executar
+        contaOrigem.transferir(contaDestino, valorASerTransferido);
 
-        double valorATransferir = 60;
-        // executar
-        origem.transferir(destino, valorATransferir);
-
-        // teste
-        Assertions.assertEquals(valorInicial - valorATransferir, origem.getSaldo());
-        Assertions.assertEquals(valorATransferir, destino.getSaldo());
+        // Test
+        Assertions.assertEquals(saldoInicialDestino + valorASerTransferido, contaDestino.getSaldo());
+        Assertions.assertEquals(saldoInicialOrigem - valorASerTransferido, contaOrigem.getSaldo());
     }
 
 }
